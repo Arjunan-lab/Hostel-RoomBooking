@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Booking History | Hostel Booking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(to right, #f0f4f8, #e8f0fe);
+      color: #333;
+    }
+
+    header {
+      background-color: #003366;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 24px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    nav {
+      background-color: #004080;
+      padding: 10px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffd700;
+    }
+
+    .history-container {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+
+    .history-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-family: 'Playfair Display', serif;
+      color: #2c3e50;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .history-table th, .history-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+
+    .history-table th {
+      background-color: #f5f5f5;
+      color: #2c3e50;
+    }
+
+    .no-history {
+      text-align: center;
+      color: #777;
+      margin-top: 40px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>Hostel Booking History</header>
+
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="rooms.html">Available Rooms</a>
+    <a href="book.html">Book a Room</a>
+    <a href="profile.html">Profile</a>
+    <a href="login.html">Logout</a>
+  </nav>
+
+  <div class="history-container">
+    <h2>Your Past Bookings</h2>
+
+    <table class="history-table" id="historyTable">
+      <thead>
+        <tr>
+          <th>Room ID</th>
+          <th>Block</th>
+          <th>Sharing</th>
+          <th>AC/Non-AC</th>
+          <th>Price</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody">
+        <!-- History rows will be inserted here -->
+      </tbody>
+    </table>
+
+    <div id="noHistoryMsg" class="no-history" style="display: none;">
+      You have no booking history yet.
+    </div>
+  </div>
+
+  <script>
+    const bookings = JSON.parse(localStorage.getItem("bookingHistory")) || [];
+
+    const historyBody = document.getElementById("historyBody");
+    const noHistoryMsg = document.getElementById("noHistoryMsg");
+
+    if (bookings.length === 0) {
+      noHistoryMsg.style.display = "block";
+    } else {
+      bookings.forEach(booking => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${booking.id}</td>
+          <td>${booking.block}</td>
+          <td>${booking.sharing}</td>
+          <td>${booking.ac}</td>
+          <td>₹${booking.price}</td>
+          <td>${booking.date}</td>
+        `;
+        historyBody.appendChild(row);
+      });
+    }
+  </script>
+
+</body>
+</html>

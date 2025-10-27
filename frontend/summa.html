@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Room Seating | Hostel Booking</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #2c3e50;
+    }
+
+    .room {
+      display: grid;
+      grid-template-columns: repeat(2, 200px);
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .seat {
+      padding: 30px;
+      border-radius: 12px;
+      background-color: #d0f0c0;
+      font-weight: bold;
+      cursor: pointer;
+      border: 2px solid #27ae60;
+      transition: background-color 0.3s;
+    }
+
+    .seat.window {
+      background-color: #a8dadc;
+    }
+
+    .seat.booked {
+      background-color: #ff6b6b;
+      cursor: not-allowed;
+      border-color: #e74c3c;
+    }
+
+    .legend {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .legend span {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .buttons {
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .book-btn {
+      background-color: #3498db;
+      color: white;
+    }
+
+    .view-btn {
+      background-color: #2ecc71;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Hostel Room - Seating Arrangement</h2>
+
+  <div class="room" id="room">
+    <div class="seat window" id="seat1" onclick="selectSeat('seat1')">Window Seat 1</div>
+    <div class="seat window" id="seat2" onclick="selectSeat('seat2')">Window Seat 2</div>
+    <div class="seat" id="seat3" onclick="selectSeat('seat3')">Non-window Seat 1</div>
+    <div class="seat" id="seat4" onclick="selectSeat('seat4')">Non-window Seat 2</div>
+  </div>
+
+  <div class="buttons">
+    <button class="book-btn" onclick="bookNow()">Book Now</button>
+    <button class="view-btn" onclick="viewSeating()">View Seating</button>
+  </div>
+
+  <div class="legend">
+    <p><span style="background:#a8dadc;"></span> Window Seat</p>
+    <p><span style="background:#d0f0c0;"></span> Non-window Seat</p>
+    <p><span style="background:#ff6b6b;"></span> Booked</p>
+  </div>
+
+  <script>
+    // Declare the variable at the top
+    let selectedSeat = null;
+
+    // Load existing booked seats from localStorage
+    function loadSeats() {
+      for (let i = 1; i <= 4; i++) {
+        const seatId = 'seat' + i;
+        const seat = document.getElementById(seatId);
+        const isBooked = localStorage.getItem(seatId);
+        if (isBooked === 'booked') {
+          seat.classList.add('booked');
+          seat.innerText = seat.innerText.split(' ')[0] + " (Booked)";
+        }
+      }
+    }
+
+    function selectSeat(seatId) {
+      const seat = document.getElementById(seatId);
+      if (seat.classList.contains('booked')) return;
+
+      clearSelections();
+      selectedSeat = seatId;
+      seat.style.border = '3px solid #000';
+    }
+
+    function clearSelections() {
+      for (let i = 1; i <= 4; i++) {
+        const seat = document.getElementById('seat' + i);
+        seat.style.border = '2px solid #27ae60';
+      }
+    }
+
+    function bookNow() {
+      if (!selectedSeat) {
+        alert("Please select a seat first.");
+        return;
+      }
+
+      if (localStorage.getItem(selectedSeat) === 'booked') {
+        alert("This seat is already booked.");
+        return;
+      }
+
+      const confirmBooking = confirm("Are you sure you want to book this seat?");
+      if (confirmBooking) {
+        localStorage.setItem(selectedSeat, 'booked');
+        const seat = document.getElementById(selectedSeat);
+        seat.classList.add('booked');
+        seat.innerText += " (Booked)";
+        clearSelections();
+        selectedSeat = null;
+        alert("Seat successfully booked.");
+      }
+    }
+
+    function viewSeating() {
+      const seats = [
+        { id: "seat1", name: "Window Seat 1" },
+        { id: "seat2", name: "Window Seat 2" },
+        { id: "seat3", name: "Non-window Seat 1" },
+        { id: "seat4", name: "Non-window Seat 2" },
+      ];
+
+      let message = "Booked Seats:\n";
+      let anyBooked = false;
+
+      seats.forEach(seat => {
+        if (localStorage.getItem(seat.id) === 'booked') {
+          message += seat.name + "\n";
+          anyBooked = true;
+        }
+      });
+
+      if (!anyBooked) message = "All seats are currently available.";
+      alert(message);
+    }
+
+    loadSeats();
+  </script>
+</body>
+</html>

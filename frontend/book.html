@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirm Room Booking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      padding: 30px 40px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    .info, .form-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .info p {
+      font-size: 16px;
+      margin: 6px 0;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .confirm-btn {
+      background-color: #2c3e50;
+      color: #fff;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      width: 100%;
+    }
+
+    .confirm-btn:hover {
+      background-color: #1523a3a3;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 15px;
+      font-size: 14px;
+      text-decoration: none;
+      color: #29278a;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      color: red;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Confirm Your Booking</h2>
+
+    <div class="info" id="roomInfo">
+      <!-- Room info will be injected here -->
+    </div>
+
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" required />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" required />
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" required />
+    </div>
+
+    <button class="confirm-btn" onclick="confirmBooking()">Confirm Booking</button>
+    <a class="back-link" href="rooms.html">← Back to Rooms</a>
+  </div>
+
+  <script>
+    const room = JSON.parse(localStorage.getItem("selectedRoom"));
+    const roomInfoDiv = document.getElementById("roomInfo");
+
+    if (!room) {
+      roomInfoDiv.innerHTML = "<p>No room selected. Please go back and select a room.</p>";
+    } else {
+      roomInfoDiv.innerHTML = `
+        <p><strong>Room Number:</strong> ${room.id}</p>
+        <p><strong>Block:</strong> ${room.block}</p>
+        <p><strong>Sharing:</strong> ${room.sharing}-person</p>
+        <p><strong>AC Type:</strong> ${room.ac}</p>
+        <p><strong>Price:</strong> ₹${room.price}</p>
+      `;
+    }let roomData = JSON.parse(localStorage.getItem("roomData")) || [];
+
+    const updatedRooms = roomData.map(r => {
+      if (r.id === room.id && r.block === room.block) {
+        return { ...r, seatsAvailable: r.seatsAvailable - 1 };
+      }
+      return r;
+    });
+    
+    localStorage.setItem("roomData", JSON.stringify(updatedRooms));
+    
+
+    function confirmBooking() {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+
+      if (!name || !email || !phone) {
+        alert("Please fill in all the details.");
+        return;
+      }
+
+      // Simple validation
+      if (!email.includes("@") || phone.length < 10) {
+        alert("Please enter valid email and phone number.");
+        return;
+      }
+
+      // Store booking (optional: you can push to an array in localStorage)
+      const booking = {
+        room,
+        name,
+        email,
+        phone
+      };
+      // After booking confirmation:
+const roomId = room.id;
+const block = room.block;
+const sharing = room.sharing;
+const ac = room.ac;
+const price = room.price;
+const date = new Date().toLocaleDateString();
+
+// Load existing booking history from localStorage
+let bookingHistory = JSON.parse(localStorage.getItem("bookingHistory")) || [];
+
+// Create new booking entry
+const newBooking = { id: roomId, block, sharing, ac, price, date };
+
+// Add new booking to the history array
+bookingHistory.push(newBooking);
+
+// Save updated history back to localStorage
+localStorage.setItem("bookingHistory", JSON.stringify(bookingHistory));
+
+// Optional: Show a confirmation alert or redirect
+alert("Room booked successfully!");
+
+      localStorage.setItem("confirmedBooking", JSON.stringify(booking));
+
+      alert(`Booking confirmed for ${name}. Room #${room.id}.`);
+      localStorage.removeItem("selectedRoom");
+      window.location.href = "dashboard.html"; // or wherever you want to go
+    }
+    
+  </script>
+
+</body>
+</html>

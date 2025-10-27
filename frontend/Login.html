@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | Hostel Booking</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+   integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" 
+  crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #ffffff, #4f4fdd);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 350px;
+    }
+    h2 {
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #4f4fdd;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #4f4fdd;
+    }
+    .toggle {
+      text-align: center;
+      margin-top: 10px;
+      cursor: pointer;
+      color: #903e3e;
+      color: rgb(69, 69, 206);
+    }
+    .con{
+      display: flex;
+      flex-direction: column;
+    }
+    .toggle:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="con">
+      <i class="fa-solid fa-circle-user" style="font-size: 140px; margin-left:100px;"></i>
+    <h2 id="form-title">Login</h2>
+  </div>
+    <form id="authForm">
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit" id="submitBtn">Login</button>
+    </form>
+    <div class="toggle" id="toggleForm">Don't have an account? Register</div>
+  </div>
+
+  <script>
+    let isLogin = true;
+
+    const formTitle = document.getElementById("form-title");
+    const submitBtn = document.getElementById("submitBtn");
+    const toggleForm = document.getElementById("toggleForm");
+
+    toggleForm.addEventListener("click", () => {
+      isLogin = !isLogin;
+      formTitle.textContent = isLogin ? "Login" : "Register";
+      submitBtn.textContent = isLogin ? "Login" : "Register";
+      toggleForm.textContent = isLogin
+        ? "Don't have an account? Register"
+        : "Already have an account? Login";
+    });
+
+    document.getElementById("authForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!username || !password) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem("registeredUsers")) || {};
+
+      if (isLogin) {
+        // LOGIN
+        if (users[username] && users[username] === password) {
+          localStorage.setItem("loggedInUser", username);
+          window.location.href = "dashboard.html";
+        } else {
+          alert("Invalid username or password.");
+        }
+      } else {
+        // REGISTER
+        if (users[username]) {
+          alert("Username already exists.");
+        } else {
+          users[username] = password;
+          localStorage.setItem("registeredUsers", JSON.stringify(users));
+          alert("Registered successfully! You can now log in.");
+          isLogin = true;
+          formTitle.textContent = "Login";
+          submitBtn.textContent = "Login";
+          toggleForm.textContent = "Don't have an account? Register";
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
